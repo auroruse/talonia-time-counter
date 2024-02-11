@@ -1,0 +1,88 @@
+body {
+    font-family: 'Exo 2', sans-serif;
+    background-color: #213039;
+    color: rgba(255, 255, 255, .9);
+    margin: 0;
+}
+
+a {
+    color: rgba(132, 250, 234, 0.60);
+    text-decoration: none;
+}
+
+a:hover {
+    color: rgba(132, 250, 234, .9);
+}
+
+header {
+    background-color: rgb(19, 31, 38);
+    width: 100%;
+    height: auto;
+    display: flex;
+    position: fixed;
+    top: 0;
+    justify-content: center;
+    color: rgba(255, 255, 255, .7);
+}
+
+#panelContainer {    
+    padding: 1rem;
+    display: flex;
+    justify-content: space-evenly;
+    gap: 2rem;
+}
+
+#displayContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+#timeDisplay {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: max(5vw, 2.5rem);
+}
+
+#attribution {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+}
+
+input {
+    background-color: #213039;
+    color: rgba(255, 255, 255, .7);
+    border: none;
+    box-shadow: 0px 2px 4px rgba(0,0,0,0.30);
+    font-family: 'Exo 2', sans-serif;
+}
+
+input[type="button"] {
+    padding: 3px;
+    border-radius: 3px;
+}
+
+input[type="button"]:hover {
+    box-shadow: 0px 2px 4px rgba(0,0,0,0.60);
+    position: relative;
+    top: -1;
+}
+
+.option {
+    margin-bottom: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.option input {
+    margin-left: 1rem;
+    height: 1.2rem;
+}
+
+.panelBtn {
+    display: flex;
+    justify-content: end;
+}
