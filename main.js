@@ -1,6 +1,6 @@
 //set values according to the URL parameters if it exists, using defaults if they don't
 const pageUrl = new URLSearchParams(location.search);
-let daysPerYear = pageUrl.get("daysperyear") ? pageUrl.get("daysperyear")/1 : 14;
+let daysPerYear = pageUrl.get("daysperyear") ? pageUrl.get("daysperyear")/1 : 73;
 let lastDateChange = pageUrl.get("lastdatechange") ? pageUrl.get("lastdatechange")/1 : 1533081600000; //JS time adds three zeroes to UNIX time
 let lastDateEpoch = pageUrl.get("lastdateepoch") ? pageUrl.get("lastdateepoch")/1 : 1104537600000;
 let fixedYears = pageUrl.get("fixedyears") ? pageUrl.get("fixedyears") === "true" : false;
