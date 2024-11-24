@@ -2,7 +2,7 @@
 const pageUrl = new URLSearchParams(location.search);
 let daysPerYear = pageUrl.get("daysperyear") ? pageUrl.get("daysperyear")/1 : 73;
 let lastDateChange = pageUrl.get("lastdatechange") ? pageUrl.get("lastdatechange")/1 : 1622498400000; //JS time adds three zeroes to UNIX time
-let lastDateEpoch = pageUrl.get("lastdateepoch") ? pageUrl.get("lastdateepoch")/1 : 1694469600000;
+let lastDateEpoch = pageUrl.get("lastdateepoch") ? pageUrl.get("lastdateepoch")/1 : 1753567200000;
 let fixedYears = pageUrl.get("fixedyears") ? pageUrl.get("fixedyears") === "true" : false;
 
 //change the HTML elements to reflect the values
