@@ -1,6 +1,10 @@
 //set values according to the URL parameters if it exists, using defaults if they don't
 const pageUrl = new URLSearchParams(location.search);
+
 let daysPerYear = pageUrl.get("daysperyear") ? pageUrl.get("daysperyear")/1 : 73;
+// This is to maintain backwards compatability with a casing bug during settings URL export (https://github.com/compupro/rp-time-calculator/issues/4)
+daysPerYear = pageUrl.get("daysperYear") ? pageUrl.get("daysperYear")/1 : daysPerYear;
+
 let lastDateChange = pageUrl.get("lastdatechange") ? pageUrl.get("lastdatechange")/1 : 1747087200000; //JS time adds three zeroes to UNIX time
 let lastDateEpoch = pageUrl.get("lastdateepoch") ? pageUrl.get("lastdateepoch")/1 : -1577930400000;
 let fixedYears = pageUrl.get("fixedyears") ? pageUrl.get("fixedyears") === "true" : false;
@@ -12,7 +16,7 @@ document.getElementById("lastDateEpoch").value = new Date(lastDateEpoch).toISOSt
 document.getElementById("fixedYears").checked = fixedYears;
 
 function getSettingsUrl() {
-    const parameters = `?daysperYear=${daysPerYear}&lastdatechange=${lastDateChange}&lastdateepoch=${lastDateEpoch}&fixedyears=${fixedYears}`;
+    const parameters = `?daysperyear=${daysPerYear}&lastdatechange=${lastDateChange}&lastdateepoch=${lastDateEpoch}&fixedyears=${fixedYears}`;
     const link = `${location.protocol}//${location.host}${location.pathname}`;
     return link + parameters;
 }
@@ -22,9 +26,6 @@ function setSettings() {
     lastDateChange = new Date(document.getElementById("lastDateChange").value)/1; //the /1 turns it into a number
     lastDateEpoch = new Date(document.getElementById("lastDateEpoch").value)/1;
     fixedYears = document.getElementById("fixedYears").checked;
-    const parameters = 
-    `?daysperYear=${daysPerYear}&lastdatechange=${lastDateChange}&lastdateepoch=${lastDateEpoch}&fixedyears=${fixedYears}`;
-    const link = `${location.protocol}//${location.host}${location.pathname}`;
     window.history.replaceState(null, "", getSettingsUrl());
 }
 
