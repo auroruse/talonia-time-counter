@@ -1,3 +1,6 @@
+//set values according to the URL parameters if it exists, using defaults if they don't
+const pageUrl = new URLSearchParams(location.search);
+
 let daysPerYear = pageUrl.get("daysperyear") ? pageUrl.get("daysperyear")/1 : 26;
 // This is to maintain backwards compatability with a casing bug during settings URL export (https://github.com/compupro/rp-time-calculator/issues/4)
 daysPerYear = pageUrl.get("daysperYear") ? pageUrl.get("daysperYear")/1 : daysPerYear;
