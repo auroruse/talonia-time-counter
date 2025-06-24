@@ -1,153 +1,82 @@
-window.addEventListener("DOMContentLoaded", () => {
-    // URL parameters and defaults
-    const pageUrl = new URLSearchParams(location.search);
+//set values according to the URL parameters if it exists, using defaults if they don't
+const pageUrl = new URLSearchParams(location.search);
 
-    let daysPerYear = pageUrl.get("daysperyear") ? Number(pageUrl.get("daysperyear")) : 26;
-    daysPerYear = pageUrl.get("daysPerYear") ? Number(pageUrl.get("daysPerYear")) : daysPerYear;
+let daysPerYear = pageUrl.get("daysperyear") ? pageUrl.get("daysperyear")/1 : 14;
+// This is to maintain backwards compatability with a casing bug during settings URL export (https://github.com/compupro/rp-time-calculator/issues/4)
+daysPerYear = pageUrl.get("daysperYear") ? pageUrl.get("daysperYear")/1 : daysPerYear;
 
-    let lastDateChange = pageUrl.get("lastdatechange") ? Number(pageUrl.get("lastdatechange")) : 1747087200000;
-    let lastDateEpoch = pageUrl.get("lastdateepoch") ? Number(pageUrl.get("lastdateepoch")) : -1577930400000;
-    let fixedYears = pageUrl.get("fixedyears") === "true" ? true : false;
+let lastDateChange = pageUrl.get("lastdatechange") ? Number(pageUrl.get("lastdatechange")) : 1747087200000;
+let lastDateEpoch = pageUrl.get("lastdateepoch") ? Number(pageUrl.get("lastdateepoch")) : -1577930400000;
+let fixedYears = pageUrl.get("fixedyears") ? pageUrl.get("fixedyears") === "true" : false;
 
-    // DOM elements
-    const daysInput = document.getElementById("daysPerYear");
-    const lastDateChangeInput = document.getElementById("lastDateChange");
-    const lastDateEpochInput = document.getElementById("lastDateEpoch");
-    const fixedYearsInput = document.getElementById("fixedYears");
+//change the HTML elements to reflect the values
+document.getElementById("daysPerYear").value = daysPerYear;
+document.getElementById("lastDateChange").value = new Date(lastDateChange).toISOString().split("T")[0];
+document.getElementById("lastDateEpoch").value = new Date(lastDateEpoch).toISOString().split("T")[0];
+document.getElementById("fixedYears").checked = fixedYears;
 
-    const singleDateInput = document.getElementById("singleDate");
-    const singleTimeInput = document.getElementById("singleTime");
-    const singleOffsetInput = document.getElementById("singleOffset");
-    const singleRPDisplay = document.getElementById("singleRPTimeDisplay");
+function getSettingsUrl() {
+    const parameters = `?daysperyear=${daysPerYear}&lastdatechange=${lastDateChange}&lastdateepoch=${lastDateEpoch}&fixedyears=${fixedYears}`;
+    const link = `${location.protocol}//${location.host}${location.pathname}`;
+    return link + parameters;
+}
 
-    const timeDisplay = document.getElementById("timeDisplay");
+function setSettings() {
+    daysPerYear = document.getElementById("daysPerYear").value;
+    lastDateChange = new Date(document.getElementById("lastDateChange").value)/1; //the /1 turns it into a number
+    lastDateEpoch = new Date(document.getElementById("lastDateEpoch").value)/1;
+    fixedYears = document.getElementById("fixedYears").checked;
+    window.history.replaceState(null, "", getSettingsUrl());
+}
 
-    const setSettingsBtn = document.getElementById("setSettingsBtn");
-    const exportSettingsBtn = document.getElementById("exportSettingsBtn");
-    const getSingleRPTimeBtn = document.getElementById("getSingleRPTimeBtn");
+setSettings();//Stops the date from flashing
 
-    const themeToggle = document.getElementById("themeToggle");
-    const htmlEl = document.documentElement;
+function exportSettings(){
+    window.prompt("Copy the following link:", getSettingsUrl());
+}
 
-    // Initialize inputs from parameters or defaults
-    daysInput.value = daysPerYear;
-    lastDateChangeInput.value = new Date(lastDateChange).toISOString().split("T")[0];
-    lastDateEpochInput.value = new Date(lastDateEpoch).toISOString().split("T")[0];
-    fixedYearsInput.checked = fixedYears;
+function getTimeOf(irlDate) {
+    if (!fixedYears) 
+        return new Date(Math.floor((365/daysPerYear)*((irlDate)-lastDateChange)+lastDateEpoch));
 
-    // Helper to generate URL with current settings
-    function getSettingsUrl() {
-        const params = `?daysperyear=${daysPerYear}&lastdatechange=${lastDateChange}&lastdateepoch=${lastDateEpoch}&fixedyears=${fixedYears}`;
-        return location.origin + location.pathname + params;
-    }
+    const day = 86400000; //The length of the day
 
-    // Update global settings from inputs and update URL
-    function setSettings() {
-        daysPerYear = Number(daysInput.value);
-        lastDateChange = Number(new Date(lastDateChangeInput.value));
-        lastDateEpoch = Number(new Date(lastDateEpochInput.value));
-        fixedYears = fixedYearsInput.checked;
+    const timeDifference = irlDate-lastDateChange;
+    
+    const years = timeDifference/(day*daysPerYear);
+    const yearCount = Math.floor(years);
 
-        window.history.replaceState(null, "", getSettingsUrl());
-    }
+    const lastDate = new Date(lastDateEpoch);
 
-    // Export current settings URL for sharing
-    function exportSettings() {
-        window.prompt("Copy the following link:", getSettingsUrl());
-    }
+    const earlyDate = lastDate.setFullYear(lastDate.getFullYear() + yearCount);
+    const latestDate = lastDate.setFullYear(lastDate.getFullYear() + 1);
+    const yearLength = latestDate - earlyDate;
 
-    // Calculate RP time given IRL timestamp
-    function getTimeOf(irlDate) {
-        if (!fixedYears) {
-            return new Date(Math.floor((365 / daysPerYear) * (irlDate - lastDateChange) + lastDateEpoch));
-        }
+    const rest = (years - yearCount)*yearLength; //Portion of the year
 
-        const day = 86400000;
-        const timeDiff = irlDate - lastDateChange;
-        const years = timeDiff / (day * daysPerYear);
-        const yearCount = Math.floor(years);
+    return new Date(earlyDate + rest);
+}
 
-        const lastDate = new Date(lastDateEpoch);
-        const earlyDate = new Date(lastDate);
-        earlyDate.setFullYear(lastDate.getFullYear() + yearCount);
+function setTime(){
+    const display = document.getElementById("timeDisplay");
+    const rpJSTime = getTimeOf(Date.now());
+    display.innerHTML = "The RP date and time is<br>" + rpJSTime.toGMTString();
+}
 
-        const nextDate = new Date(earlyDate);
-        nextDate.setFullYear(earlyDate.getFullYear() + 1);
+function getSingleRPTime(){
+    const singleDisplay = document.getElementById("singleRPTimeDisplay");
+    let singleIRLTime = document.getElementById("singleTime").value.split(":");
+    singleIRLTime = parseInt(singleIRLTime[0]*60) + parseInt(singleIRLTime[1]); //get selected IRL time in minutes
+    singleIRLTime *= 60000; //make it milliseconds
+    let singleIRLOffset = document.getElementById("singleOffset").value; //get selected IRL timezone in hours
+    singleIRLOffset *= 3600000; //make it milliseconds
+    singleIRLTime -= singleIRLOffset; //subtract the offset from the time to make it UTC
 
-        const yearLength = nextDate - earlyDate;
-        const rest = (years - yearCount) * yearLength;
+    let singleIRLDate = document.getElementById("singleDate").value; //get the value of the date picker
+    singleIRLDate = new Date(singleIRLDate)/1; //turn it into js time (milliseconds)
+    const dateTime = new Date(singleIRLDate + singleIRLTime)/1;
 
-        return new Date(earlyDate.getTime() + rest);
-    }
+    singleDisplay.innerHTML = getTimeOf(dateTime).toGMTString();
+}
 
-    // Continuously update main RP time display every 100ms
-    function updateRPTime() {
-        const rpTime = getTimeOf(Date.now());
-        timeDisplay.innerHTML = `The RP date and time is<br>${rpTime.toGMTString()}`;
-    }
-
-    // Calculate RP time for single user input
-    function getSingleRPTime() {
-        let irlTimeParts = singleTimeInput.value.split(":");
-        if (irlTimeParts.length !== 2) {
-            singleRPDisplay.textContent = "Invalid time format";
-            return;
-        }
-
-        let irlMinutes = parseInt(irlTimeParts[0], 10) * 60 + parseInt(irlTimeParts[1], 10);
-        let irlMilliseconds = irlMinutes * 60000;
-
-        let offsetMs = Number(singleOffsetInput.value) * 3600000;
-
-        let irlDateNum = Number(new Date(singleDateInput.value));
-        if (isNaN(irlDateNum)) {
-            singleRPDisplay.textContent = "Invalid date";
-            return;
-        }
-
-        let irlTimestamp = irlDateNum + irlMilliseconds - offsetMs;
-
-        let rpDate = getTimeOf(irlTimestamp);
-        singleRPDisplay.textContent = rpDate.toGMTString();
-    }
-
-    // Dark mode toggle initialization and event
-    function initTheme() {
-        const savedTheme = localStorage.getItem("theme");
-        if (savedTheme === "dark") {
-            htmlEl.setAttribute("data-theme", "dark");
-            themeToggle.checked = true;
-        } else {
-            htmlEl.setAttribute("data-theme", "light");
-            themeToggle.checked = false;
-        }
-
-        themeToggle.addEventListener("change", () => {
-            if (themeToggle.checked) {
-                htmlEl.setAttribute("data-theme", "dark");
-                localStorage.setItem("theme", "dark");
-            } else {
-                htmlEl.setAttribute("data-theme", "light");
-                localStorage.setItem("theme", "light");
-            }
-        });
-    }
-
-    // Event listeners for buttons
-    setSettingsBtn.addEventListener("click", () => {
-        setSettings();
-        updateRPTime(); // Immediately update display on settings change
-    });
-
-    exportSettingsBtn.addEventListener("click", exportSettings);
-
-    getSingleRPTimeBtn.addEventListener("click", getSingleRPTime);
-
-    // Initialize theme
-    initTheme();
-
-    // Initial set of settings and start RP time update loop
-    setSettings();
-    updateRPTime();
-    setInterval(updateRPTime, 100);
-});
+setInterval(function(){setTime()}, 1);
