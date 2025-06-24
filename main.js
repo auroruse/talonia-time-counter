@@ -1,53 +1,22 @@
-// === Existing variables and URL param loading ===
+// --- Existing RP time calculator code ---
+
+// Set values from URL or defaults
 const pageUrl = new URLSearchParams(location.search);
 
 let daysPerYear = pageUrl.get("daysperyear") ? Number(pageUrl.get("daysperyear")) : 26;
-// Backwards compatibility for casing bug
-daysPerYear = pageUrl.get("daysperYear") ? Number(pageUrl.get("daysperYear")) : daysPerYear;
+// Backwards compatibility with casing bug
+daysPerYear = pageUrl.get("daysPerYear") ? Number(pageUrl.get("daysPerYear")) : daysPerYear;
 
-let lastDateChange = pageUrl.get("lastdatechange") ? Number(pageUrl.get("lastdatechange")) : 1747087200000;
+let lastDateChange = pageUrl.get("lastdatechange") ? Number(pageUrl.get("lastdatechange")) : 1747087200000; // default
 let lastDateEpoch = pageUrl.get("lastdateepoch") ? Number(pageUrl.get("lastdateepoch")) : -1577930400000;
-let fixedYears = pageUrl.get("fixedyears") ? pageUrl.get("fixedyears") === "true" : false;
+let fixedYears = pageUrl.get("fixedyears") === "true" ? true : false;
 
-// Reflect values in HTML
+// Initialize HTML input values
 document.getElementById("daysPerYear").value = daysPerYear;
 document.getElementById("lastDateChange").value = new Date(lastDateChange).toISOString().split("T")[0];
 document.getElementById("lastDateEpoch").value = new Date(lastDateEpoch).toISOString().split("T")[0];
 document.getElementById("fixedYears").checked = fixedYears;
 
-// === Dark Mode Toggle Setup ===
-const darkModeToggle = document.getElementById('darkModeToggle');
-
-function applyTheme(theme) {
-    if (theme === 'dark') {
-        document.documentElement.setAttribute('data-theme', 'dark');
-        darkModeToggle.checked = true;
-        localStorage.setItem('theme', 'dark');
-    } else {
-        document.documentElement.removeAttribute('data-theme');
-        darkModeToggle.checked = false;
-        localStorage.setItem('theme', 'light');
-    }
-}
-
-// Load stored theme on page load
-const storedTheme = localStorage.getItem('theme');
-if (storedTheme === 'dark') {
-    applyTheme('dark');
-} else {
-    applyTheme('light');
-}
-
-// Toggle event listener
-darkModeToggle.addEventListener('change', () => {
-    if (darkModeToggle.checked) {
-        applyTheme('dark');
-    } else {
-        applyTheme('light');
-    }
-});
-
-// === Existing functions ===
 function getSettingsUrl() {
     const parameters = `?daysperyear=${daysPerYear}&lastdatechange=${lastDateChange}&lastdateepoch=${lastDateEpoch}&fixedyears=${fixedYears}`;
     const link = `${location.protocol}//${location.host}${location.pathname}`;
@@ -62,9 +31,9 @@ function setSettings() {
     window.history.replaceState(null, "", getSettingsUrl());
 }
 
-setSettings(); // Initialize settings
+setSettings(); // initialize
 
-function exportSettings() {
+function exportSettings(){
     window.prompt("Copy the following link:", getSettingsUrl());
 }
 
@@ -73,20 +42,22 @@ function getTimeOf(irlDate) {
         return new Date(Math.floor((365 / daysPerYear) * (irlDate - lastDateChange) + lastDateEpoch));
     }
 
-    const day = 86400000;
+    const day = 86400000; // milliseconds per day
     const timeDifference = irlDate - lastDateChange;
     const years = timeDifference / (day * daysPerYear);
     const yearCount = Math.floor(years);
 
     const lastDate = new Date(lastDateEpoch);
+    const earlyDate = new Date(lastDate);
+    earlyDate.setFullYear(lastDate.getFullYear() + yearCount);
 
-    const earlyDate = lastDate.setFullYear(lastDate.getFullYear() + yearCount);
-    const latestDate = lastDate.setFullYear(lastDate.getFullYear() + 1);
+    const latestDate = new Date(earlyDate);
+    latestDate.setFullYear(earlyDate.getFullYear() + 1);
+
     const yearLength = latestDate - earlyDate;
-
     const rest = (years - yearCount) * yearLength;
 
-    return new Date(earlyDate + rest);
+    return new Date(earlyDate.getTime() + rest);
 }
 
 function setTime() {
@@ -98,19 +69,43 @@ function setTime() {
 function getSingleRPTime() {
     const singleDisplay = document.getElementById("singleRPTimeDisplay");
     let singleIRLTime = document.getElementById("singleTime").value.split(":");
-    singleIRLTime = parseInt(singleIRLTime[0] * 60) + parseInt(singleIRLTime[1]);
-    singleIRLTime *= 60000;
-
+    singleIRLTime = parseInt(singleIRLTime[0], 10) * 60 + parseInt(singleIRLTime[1], 10);
+    singleIRLTime *= 60000; // milliseconds
     let singleIRLOffset = Number(document.getElementById("singleOffset").value);
-    singleIRLOffset *= 3600000;
-
+    singleIRLOffset *= 3600000; // milliseconds
     singleIRLTime -= singleIRLOffset;
 
     let singleIRLDate = document.getElementById("singleDate").value;
     singleIRLDate = Number(new Date(singleIRLDate));
     const dateTime = new Date(singleIRLDate + singleIRLTime);
 
-    singleDisplay.innerHTML = getTimeOf(dateTime).toGMTString();
+    singleDisplay.innerHTML = getTimeOf(dateTime.getTime()).toGMTString();
 }
 
-setInterval(setTime, 1000);
+// Update RP time every 10 ms for smooth updates
+setInterval(setTime, 10);
+
+// --- Dark Mode Toggle Logic ---
+
+const themeToggle = document.getElementById("themeToggle");
+const htmlEl = document.documentElement;
+
+// Initialize toggle state from localStorage or default light mode
+const savedTheme = localStorage.getItem("theme");
+if (savedTheme === "dark") {
+    htmlEl.setAttribute("data-theme", "dark");
+    themeToggle.checked = true;
+} else {
+    htmlEl.setAttribute("data-theme", "light");
+    themeToggle.checked = false;
+}
+
+themeToggle.addEventListener("change", () => {
+    if (themeToggle.checked) {
+        htmlEl.setAttribute("data-theme", "dark");
+        localStorage.setItem("theme", "dark");
+    } else {
+        htmlEl.setAttribute("data-theme", "light");
+        localStorage.setItem("theme", "light");
+    }
+});
