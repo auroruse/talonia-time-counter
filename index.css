@@ -40,14 +40,15 @@ a:hover {
 header {
     background-color: var(--bg);
     width: 100%;
+    height: auto;
     display: flex;
     position: fixed;
     top: 0;
     justify-content: center;
     color: var(--fg);
     box-shadow: 0 1px 4px var(--shadow);
-    z-index: 1000;
-    padding: 1rem 0;
+    z-index: 10;
+    padding: 0.75rem 0;
 }
 
 #panelContainer {
@@ -56,26 +57,31 @@ header {
     justify-content: space-evenly;
     gap: 2rem;
     flex-wrap: wrap;
+    width: 100%;
+    max-width: 1200px;
 }
 
 #displayContainer {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding-top: 8rem; /* offset header height */
-    text-align: center;
+    height: 100%;
+    margin-top: 6rem; /* space below fixed header */
+    padding: 1rem;
 }
 
 #timeDisplay {
     font-family: inherit;
     font-size: max(5vw, 2.5rem);
+    text-align: center;
 }
 
 #attribution {
     position: fixed;
     bottom: 2rem;
     right: 2rem;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
+    color: var(--fg);
 }
 
 input {
@@ -115,13 +121,6 @@ input[type="button"]:focus-visible {
     outline-offset: 3px;
 }
 
-input[type="date"],
-input[type="time"],
-input[type="number"] {
-    padding: 0.3rem 0.5rem;
-    border-radius: 4px;
-}
-
 .option {
     margin-bottom: 5px;
     display: flex;
@@ -138,28 +137,74 @@ input[type="number"] {
 .panelBtn {
     display: flex;
     justify-content: end;
-    margin-top: 0.5rem;
 }
 
 html {
-    scroll-padding-top: 4rem;
+    scroll-padding-top: 4rem; /* offset for fixed header */
 }
 
-input:focus-visible,
-button:focus-visible {
+input:focus-visible, button:focus-visible {
     outline: 2px solid var(--accent-hover);
     outline-offset: 2px;
 }
 
-.toggle-container {
+/* Dark mode toggle switch container */
+#darkModeToggleContainer {
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+    width: 100%;
 }
 
-#toggleDark {
-    margin-left: 0.5rem;
-    transform: scale(1.2);
-    accent-color: var(--accent);
+/* Hide default checkbox */
+#darkModeToggle {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    position: absolute;
+}
+
+/* Custom toggle slider */
+.toggle-slider {
+    position: relative;
+    width: 50px;
+    height: 26px;
+    background-color: var(--accent);
+    border-radius: 26px;
+    cursor: pointer;
+    box-shadow: 0 2px 6px var(--shadow);
+    transition: background-color 0.3s ease;
+}
+
+/* Circle inside toggle */
+.toggle-slider::before {
+    content: "";
+    position: absolute;
+    height: 22px;
+    width: 22px;
+    left: 2px;
+    top: 2px;
+    background-color: var(--bg);
+    border-radius: 50%;
+    transition: transform 0.3s ease;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+/* When checked, move circle and change background */
+#darkModeToggle:checked + .toggle-slider {
+    background-color: var(--accent-hover);
+}
+
+#darkModeToggle:checked + .toggle-slider::before {
+    transform: translateX(24px);
+}
+
+/* Label text */
+#darkModeLabel {
+    color: var(--fg);
+    font-weight: 600;
+    font-size: 1rem;
+    margin-left: 0.75rem;
+    user-select: none;
 }
