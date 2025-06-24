@@ -80,3 +80,36 @@ function getSingleRPTime(){
 }
 
 setInterval(function(){setTime()}, 1);
+
+// --- Dark mode toggle code ---
+
+function toggleDarkMode() {
+  const htmlEl = document.documentElement;
+  if (htmlEl.getAttribute('data-theme') === 'dark') {
+    htmlEl.setAttribute('data-theme', 'light');
+    localStorage.setItem('theme', 'light');
+  } else {
+    htmlEl.setAttribute('data-theme', 'dark');
+    localStorage.setItem('theme', 'dark');
+  }
+}
+
+function applyStoredTheme() {
+  const storedTheme = localStorage.getItem('theme');
+  if (storedTheme === 'dark') {
+    document.documentElement.setAttribute('data-theme', 'dark');
+  } else if (storedTheme === 'light') {
+    document.documentElement.setAttribute('data-theme', 'light');
+  } else {
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    } else {
+      document.documentElement.setAttribute('data-theme', 'light');
+    }
+  }
+}
+
+applyStoredTheme();
+
+// For later: hook this to a button with id "darkModeToggle"
+document.getElementById("darkModeToggle")?.addEventListener("click", toggleDarkMode);
