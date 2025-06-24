@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en">
 <head>
     <meta charset="utf-8" />
     <title>Talonia | RP Time Calculator</title>
@@ -12,74 +12,88 @@
         <div id="panelContainer">
             <div class="panel">
                 <b>Settings:</b>
+
                 <div class="option">
                     <label for="daysPerYear">Days per year:</label>
                     <input type="number" id="daysPerYear" value="26" />
                 </div>
+
                 <div class="option">
                     <label for="lastDateChange">Last RP date change:</label>
                     <input type="date" id="lastDateChange" value="2025-05-13" />
                 </div>
+
                 <div class="option">
                     <label for="lastDateEpoch">What the RP date changed to:</label>
                     <input type="date" id="lastDateEpoch" value="1920-01-01" />
                 </div>
-                <div class="option" title='"Use fixed years" ensures leap years have consistent lengths'>
+
+                <div
+                    class="option"
+                    title='"Use fixed years" ensures leap years are same length as non-leap years instead of scaling time linearly'
+                >
                     <label for="fixedYears">Use Fixed Years:</label>
                     <input type="checkbox" id="fixedYears" />
                 </div>
+
                 <div class="panelBtn">
-                    <input type="button" onclick="setSettings();" value="Set Settings" />
+                    <input type="button" id="setSettingsBtn" value="Set Settings" />
                 </div>
             </div>
 
             <div class="panel">
                 <b>Get RP time at...</b>
+
                 <div class="option">
-                    <label for="singleDate">IRL Date:</label>
+                    IRL Date:
                     <input type="date" id="singleDate" />
                 </div>
+
                 <div class="option">
-                    <label for="singleTime">IRL Time:</label>
+                    IRL Time:
                     <input type="time" id="singleTime" value="00:00" />
                 </div>
+
                 <div class="option">
-                    <label for="singleOffset">IRL Hours from GMT:</label>
+                    IRL Hours from GMT:
                     <input type="number" id="singleOffset" value="0" step="any" />
                 </div>
+
                 <div class="panelBtn">
-                    <input type="button" onclick="getSingleRPTime()" value="Get RP Time" />
+                    <input type="button" id="getSingleRPTimeBtn" value="Get RP Time" />
                 </div>
+
                 <p id="singleRPTimeDisplay"></p>
             </div>
 
             <div class="panel">
-                <b>Direct link to current settings</b>
+                <b>Direct Link to Current Settings</b>
                 <div class="panelBtn">
-                    <input type="button" onclick="exportSettings()" value="Get Link" />
+                    <input type="button" id="exportSettingsBtn" value="Get Link" />
                 </div>
             </div>
 
             <div class="panel">
                 <b>Website Theme</b>
-                <div class="panelBtn" style="align-items: center;">
-                    <label class="switch" for="themeToggle">
-                        <input type="checkbox" id="themeToggle" />
-                        <span class="slider"></span>
-                    </label>
-                </div>
+                <label class="toggle-switch" title="Toggle Website Theme">
+                    <input type="checkbox" id="themeToggle" />
+                    <span class="toggle-slider"></span>
+                </label>
             </div>
         </div>
     </header>
 
-    <main id="displayContainer">
-        <div id="timeDisplay">If you are seeing this, either your time settings are invalid or you have JavaScript disabled.</div>
-    </main>
+    <div id="displayContainer">
+        <div id="timeDisplay">
+            If you are seeing this, either your time settings are invalid or you have JavaScript disabled.
+        </div>
+    </div>
 
-    <footer id="attribution">
+    <div id="attribution">
         Copyright © 2019 compupro. Modified by auroruse, 2025.
-        (This software is available under the <a href="https://github.com/compupro/rp-time-calculator/blob/master/LICENSE">MIT License</a>)
-    </footer>
+        (This software is available under the
+        <a href="https://github.com/compupro/rp-time-calculator/blob/master/LICENSE">MIT License</a>)
+    </div>
 
     <script type="text/javascript" src="main.js"></script>
 </body>
