@@ -1,31 +1,32 @@
 body {
     font-family: 'Avenir', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-    background-color: #213039;
-    color: rgba(255, 255, 255, .9);
+    background-color: #3d5343;
+    color: rgba(211, 235, 211, 0.9);
     margin: 0;
 }
 
 a {
-    color: rgba(132, 250, 234, 0.60);
+    color: rgba(211, 235, 211, 0.6);
     text-decoration: none;
 }
 
 a:hover {
-    color: rgba(132, 250, 234, .9);
+    color: rgba(211, 235, 211, 0.9);
 }
 
 header {
-    background-color: rgb(19, 31, 38);
+    background-color: #3d5343;
     width: 100%;
     height: auto;
     display: flex;
     position: fixed;
     top: 0;
     justify-content: center;
-    color: rgba(255, 255, 255, .7);
+    color: rgba(211, 235, 211, 0.7);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2); /* Added for depth */
 }
 
-#panelContainer {    
+#panelContainer {
     padding: 1rem;
     display: flex;
     justify-content: space-evenly;
@@ -51,10 +52,10 @@ header {
 }
 
 input {
-    background-color: #213039;
-    color: rgba(255, 255, 255, .7);
+    background-color: #3d5343;
+    color: rgba(211, 235, 211, 0.7);
     border: none;
-    box-shadow: 0px 2px 4px rgba(0,0,0,0.30);
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.15); /* Softened */
     font-family: 'Avenir', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
@@ -64,9 +65,9 @@ input[type="button"] {
 }
 
 input[type="button"]:hover {
-    box-shadow: 0px 2px 4px rgba(0,0,0,0.60);
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.25); /* Slightly stronger on hover */
     position: relative;
-    top: -1;
+    top: -1px;
 }
 
 .option {
